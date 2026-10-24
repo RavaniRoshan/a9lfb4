@@ -51,13 +51,7 @@ cd frontend && npm test && npm run lint
 ```
 
 ## Deployment
-- Frontend (Vercel): import `frontend/` as a Vite project. Set env `VITE_API_BASE` to the backend URL.
-- Backend (Heroku/Render): deploy `backend/` (Dockerfile or Procfile). Set env vars as needed; cache dir is `/data/cache` (ephemeral on Heroku — first request fetches live).
-
-- Frontend (Vercel): https://frontend-mu-beige-39.vercel.app
-- Backend (Vercel): https://backend-ten-chi-59.vercel.app
-
-Deployment URL placeholder: `https://frontend-mu-beige-39.vercel.app`
+See DEPLOYMENT.md. Live: frontend https://frontend-mu-beige-39.vercel.app, backend https://backend-ten-chi-59.vercel.app.
 
 ## AI tools disclosure
 Built with assistance from an AI coding agent (Kilo/Beam). All generated code was reviewed and tested by the author.
