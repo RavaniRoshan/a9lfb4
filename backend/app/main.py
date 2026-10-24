@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Query
+from starlette.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import (
@@ -16,7 +17,7 @@ app = FastAPI(title="UK Wind Forecast Accuracy")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -47,15 +48,15 @@ def config():
 
 
 @app.get("/api/series")
-def series(
-    decision_mode: str = Query(None),
-    gate_time: str = Query(None),
-    lead_hours: float = Query(None),
-    tolerance_min: int = Query(None),
+async def series(
+    decision_mode: str = Query(DEFAULT_DECISION_MODE, pattern="^(gate|lead)$"),
+    gate_time: str = Query(DEFAULT_GATE_TIME, pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$"),
+    lead_hours: float = Query(DEFAULT_LEAD_HOURS, ge=0, le=72),
+    tolerance_min: int = Query(DEFAULT_TOLERANCE_MIN, ge=0, le=240),
 ):
     p = _params(decision_mode, gate_time, lead_hours, tolerance_min)
-    actuals = fetch_fuelhh()
-    forecasts = fetch_windfor()
+    actuals = await run_in_threadpool(fetch_fuelhh)
+    forecasts = await run_in_threadpool(fetch_windfor)
     data = build_series(
         actuals, forecasts,
         mode=p["mode"], gate_time=p["gate_time"],
@@ -65,15 +66,15 @@ def series(
 
 
 @app.get("/api/metrics")
-def metrics(
-    decision_mode: str = Query(None),
-    gate_time: str = Query(None),
-    lead_hours: float = Query(None),
-    tolerance_min: int = Query(None),
+async def metrics(
+    decision_mode: str = Query(DEFAULT_DECISION_MODE, pattern="^(gate|lead)$"),
+    gate_time: str = Query(DEFAULT_GATE_TIME, pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$"),
+    lead_hours: float = Query(DEFAULT_LEAD_HOURS, ge=0, le=72),
+    tolerance_min: int = Query(DEFAULT_TOLERANCE_MIN, ge=0, le=240),
 ):
     p = _params(decision_mode, gate_time, lead_hours, tolerance_min)
-    actuals = fetch_fuelhh()
-    forecasts = fetch_windfor()
+    actuals = await run_in_threadpool(fetch_fuelhh)
+    forecasts = await run_in_threadpool(fetch_windfor)
     data = build_series(
         actuals, forecasts,
         mode=p["mode"], gate_time=p["gate_time"],
@@ -83,7 +84,7 @@ def metrics(
 
 
 @app.post("/api/refresh")
-def refresh():
-    fetch_fuelhh(force=True)
-    fetch_windfor(force=True)
+async def refresh():
+    await run_in_threadpool(fetch_fuelhh, True)
+    await run_in_threadpool(fetch_windfor, True)
     return {"status": "refreshed"}

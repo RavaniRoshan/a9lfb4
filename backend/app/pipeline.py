@@ -63,7 +63,13 @@ def build_series(
     lead_hours: float = 24.0,
     tolerance_min: int = 60,
 ) -> List[Dict[str, Any]]:
-    actuals = sorted(actual_rows, key=lambda r: r["startTime"])
+    # dedupe revisions: keep the latest publishTime per startTime
+    by_start = {}
+    for r in actual_rows:
+        cur = by_start.get(r["startTime"])
+        if cur is None or r.get("publishTime", "") > cur.get("publishTime", ""):
+            by_start[r["startTime"]] = r
+    actuals = sorted(by_start.values(), key=lambda r: r["startTime"])
     vintages = group_vintages(forecast_rows)
     publish_times = sorted(vintages.keys())
     results: List[Dict[str, Any]] = []
@@ -87,8 +93,8 @@ def build_series(
             "actual": gen,
             "forecast": forecast,
             "forecastStartTime": fstart.isoformat().replace("+00:00", "Z") if fstart else None,
-            "publishTime": pub.isoformat().replace("+00:00", "Z") if pub else None,
-            "leadHours": lead,
+        "publishTime": pub.isoformat().replace("+00:00", "Z") if pub else None,
+        "leadHours": lead,
             "error": error,
             "missing": missing,
             "decisionTime": dt.isoformat().replace("+00:00", "Z"),

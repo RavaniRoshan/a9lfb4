@@ -19,6 +19,8 @@ export default function AccuracyDashboard({ metrics }: { metrics: Metrics | null
         <div className="kpi"><span>MAPE</span><strong>{o.mape == null ? "—" : (o.mape * 100).toFixed(2) + "%"}</strong></div>
         <div className="kpi"><span>Periods (n)</span><strong>{o.n}</strong></div>
         <div className="kpi"><span>Missing</span><strong>{o.missing}</strong></div>
+        <div className="kpi"><span>MAPE skipped (zero actual)</span><strong>{o.mapeSkipped}</strong></div>
+        <div className="kpi"><span>Gaps (30-min)</span><strong>{o.gaps}</strong></div>
       </div>
 
       <h3>MAE by day</h3>

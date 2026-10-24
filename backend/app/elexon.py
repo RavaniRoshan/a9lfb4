@@ -24,7 +24,9 @@ def _load_cache(path: Path) -> Any:
 
 def _save_cache(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data))
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(data))
+    tmp.replace(path)
 
 
 def fetch_fuelhh(force: bool = False) -> List[dict]:

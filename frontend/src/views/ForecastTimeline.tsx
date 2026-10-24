@@ -11,6 +11,20 @@ export default function ForecastTimeline({ series }: { series: Period[] }) {
     leadHours: p.leadHours,
   }));
 
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (!active || !payload || !payload.length) return null;
+    const p = payload[0].payload;
+    return (
+      <div style={{ background: "#fff", border: "1px solid #ccc", padding: 8, fontSize: 12 }}>
+        <div><strong>{p.time}</strong></div>
+        <div>Actual: {p.actual?.toLocaleString()} MW</div>
+        <div>Forecast: {p.forecast == null ? "—" : p.forecast.toLocaleString()} MW</div>
+        <div>Vintage: {p.publishTime ?? "—"}</div>
+        <div>Lead: {p.leadHours == null ? "—" : p.leadHours.toFixed(1)} h</div>
+      </div>
+    );
+  };
+
   return (
     <div>
       <h2>Decision-time wind forecast vs actual</h2>
@@ -19,7 +33,7 @@ export default function ForecastTimeline({ series }: { series: Period[] }) {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="time" minTickGap={40} />
           <YAxis label={{ value: "MW", angle: -90, position: "insideLeft" }} />
-          <Tooltip formatter={(v: any) => (v == null ? "—" : Number(v).toLocaleString())} />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Line type="monotone" dataKey="actual" stroke="#1f77b4" dot={false} name="Actual" />
           <Line type="monotone" dataKey="forecast" stroke="#ff7f0e" dot={false} name="Decision-eligible forecast" />
@@ -31,7 +45,7 @@ export default function ForecastTimeline({ series }: { series: Period[] }) {
             <tr><th>Period (UTC)</th><th>Actual MW</th><th>Forecast MW</th><th>Error MW</th><th>Vintage (publishTime)</th><th>Lead h</th></tr>
           </thead>
           <tbody>
-            {series.slice(0, 200).map((p) => (
+            {series.map((p) => (
               <tr key={p.startTime}>
                 <td>{p.startTime}</td>
                 <td>{p.actual.toLocaleString()}</td>
@@ -43,7 +57,6 @@ export default function ForecastTimeline({ series }: { series: Period[] }) {
             ))}
           </tbody>
         </table>
-        {series.length > 200 && <p className="muted">Showing first 200 of {series.length} periods.</p>}
       </div>
     </div>
   );
