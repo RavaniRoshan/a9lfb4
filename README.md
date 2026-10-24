@@ -6,7 +6,7 @@ National-level UK wind generation: decision-time forecasts vs actuals for **Janu
 
 - Live app: https://frontend-mu-beige-39.vercel.app
 - API: https://backend-ten-chi-59.vercel.app
-- Repo: https://github.com/RavaniRoshan/a9lfb4
+- Demo video (unlisted): https://youtu.be/KQqdD4y8Qfk
 
 ## What it does
 
