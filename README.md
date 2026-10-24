@@ -54,7 +54,7 @@ cd frontend && npm test && npm run lint
 See DEPLOYMENT.md. Live: frontend https://frontend-mu-beige-39.vercel.app, backend https://backend-ten-chi-59.vercel.app.
 
 ## AI tools disclosure
-Built with assistance from an AI coding agent (Kilo/Beam). All generated code was reviewed and tested by the author.
+Built with assistance from an AI coding agent (Kilo/Beam, Claude Code) for scaffolding, refactoring, tests, and documentation. HyperFrames was used to author and render the demo video. All generated code was reviewed and tested by the author.
 
 ## Domain note
 Forecasts are decision-eligible: for each delivery period the latest WINDFOR vintage with publishTime <= decision_time (default previous day 09:10 UTC) is used, never the latest-as-of-now vintage.
